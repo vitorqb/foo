@@ -1,0 +1,11 @@
+#Base template. 
+#Look at .override, which defines the dev env and .prod, which defines the prod environments
+#By defeult will be used docker-compose.override.yml, which is for development purposes only
+version: '2'
+services:
+  frontend:
+    image: digitalarcwelding.azurecr.io/qrt_client:develop
+    depends_on:
+      - backend
+  backend:
+    image: digitalarcwelding.azurecr.io/qrt_server:develop

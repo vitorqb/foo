@@ -1,0 +1,43 @@
+#Test template for cloud demos extending the base one.
+#It won't be executed by default with docker-compose up and needs explicit usage of -f parameter
+version: '2'
+services:
+  frontend:
+    restart: always
+    container_name: qrt_client_cloud
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    volumes:
+      - /var/logs/nginx:/var/logs/nginx/
+    network_mode: "host"    
+  backend:
+    restart: always
+    container_name: qrt_server_cloud
+    depends_on:
+      - mongodb
+    ports:
+      - "3000:3000"
+    environment:   
+      - MONGO_HOST=qrt_db_cloud:27017
+      - MONGO_DB_NAME=measurements
+      - MODELS_ABSOLUTE_PATH=/qrt_server/models
+      - PART_IMAGES_ABSOLUTE_PATH=/qrt_server/images
+      - LOGO_ABSOLUTE_PATH=/qrt_server/logo
+      - LOGS_DIR=/qrt_server/logs
+    volumes:
+      - /qrt_server
+      - /qrt_server/node_modules
+      - /var/lib/qrt/models:/qrt_server/models
+      - /var/lib/qrt/images:/qrt_server/images
+      - /var/lib/qrt/logo:/qrt_server/logo
+      - /var/log/qrt:/qrt_server/logs 
+  mongodb:
+    image: mongo
+    container_name: qrt_db_cloud
+    ports:
+      - "27017:27017"
+    command: "--bind_ip 0.0.0.0"
+    volumes:
+      - /var/lib/mongodb/db:/data/db
